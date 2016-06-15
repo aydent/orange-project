@@ -55,6 +55,36 @@ resources:
     properties:
       floating_ip: { get_resource: floating_ip }
       server_id: { get_resource: server }
+  
+  volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: 40
+      volume_type: standard
+      metadata:
+        fs_type: ext4
+
+  volume_attachement:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: server }
+      mountpoint: /dev/vdb
+      volume_id: { get_resource: volume }
+
+  db:
+    type: OS::Nova::server
+      key_name: aydent
+      image: 6622878a-c762-4a88-b594-c30f255dcc06
+      flavor: 42
+      networks:
+        - network: { get_resource: network }
+      security_groups:
+        - { get_resource: security_group }
+      user_data:
+        str_replace: |
+          #!/bin/bash
+          sudo -E apt-get -q -y install mysql-server 
+
 
 outputs:
   floating_ip_url:
