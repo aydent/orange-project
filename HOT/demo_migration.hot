@@ -72,7 +72,8 @@ resources:
       volume_id: { get_resource: volume }
 
   db:
-    type: OS::Nova::server
+    type: OS::Nova::Server
+    properties:
       key_name: aydent
       image: 6622878a-c762-4a88-b594-c30f255dcc06
       flavor: 42
@@ -81,10 +82,10 @@ resources:
       security_groups:
         - { get_resource: security_group }
       user_data:
-        str_replace: |
-          #!/bin/bash
-          sudo -E apt-get -q -y install mysql-server 
-
+        str_replace:
+          template: |
+            #!/bin/bash
+            sudo -E apt-get -q -y install mysql-server
 
 outputs:
   floating_ip_url:
